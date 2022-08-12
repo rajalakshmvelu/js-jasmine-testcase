@@ -1,30 +1,28 @@
+const item_names = ['Aged Brie', 'Backstage passes to a TAFKAL80ETC concert', 'Sulfuras, Hand of Ragnaros']
 class Item {
   constructor(name, sellIn, quality){
     this.name = name;
     this.sellIn = sellIn;
     this.quality = quality;
   }
-  decrease_quality(){
-    return this.quality -= 1
+  decrease_quality = () => { this.quality -= 1 }
+  increase_quality = () => { this.quality += 1 }
+  check_quality_name = () => {
+    return (!item_names.includes(this.name) && this.quality > 0)
   }
-  increase_quality(){
-    return this.quality += 1
-  }
-  check_quality_name(){
-    return (!['Aged Brie', 'Backstage passes to a TAFKAL80ETC concert', 'Sulfuras, Hand of Ragnaros'].includes(this.name) && this.quality > 0)
-  }
-  check_sell_in(){
+  check_sell_in = () =>{
     this.increase_quality();
-    if (this.name == 'Backstage passes to a TAFKAL80ETC concert') {
+    if (this.name === item_names[1]) {
       if (this.sellIn < 11 && this.quality < 50)
         this.increase_quality();
       if (this.sellIn < 6 && this.quality < 50)
         this.increase_quality();
     }
-  }
-  check_quality_sell_in(){
-    if (this.name != 'Aged Brie'){
-      if (this.name != 'Backstage passes to a TAFKAL80ETC concert'){
+  } 
+  check_quality_sell_in = () => {
+    let names = item_names;
+    if (this.name !== names[0]){
+      if (this.name !== names[1]){
         if (this.check_quality_name())
           this.decrease_quality
         }
@@ -33,24 +31,24 @@ class Item {
       }else if (this.quality < 50)
         this.increase_quality
   }
-}
+ }
 
 class Shop {
   constructor(items=[]){
     this.items = items;
   }
   updateQuality() {
-    for (var i = 0; i < this.items.length; i++) {
-      if (this.items[i].check_quality_name()){
-        this.items[i].decrease_quality();
-      }else if (this.items[i].quality < 50) {        
-        this.items[i].check_sell_in();
+    this.items.forEach(function (item){
+      if (item.check_quality_name()){
+        item.decrease_quality();    
+      }else if (item.quality < 50) {
+        item.check_sell_in();
       }
-      if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
-        this.items[i].sellIn = this.items[i].sellIn - 1;}
-      if (this.items[i].sellIn < 0) {
-        this.items[i].check_quality_sell_in()}
-    }
+      if (item.name !==item_names[2]) {
+        item.sellIn -= 1;}
+      if (item.sellIn < 0) {
+        item.check_quality_sell_in()}
+    });
     return this.items;
   }
 }
